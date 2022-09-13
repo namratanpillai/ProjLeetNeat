@@ -5,7 +5,9 @@ public class MaximumSubarraySumWithOneDeletion {
     public int maximumSum(int[] arr) {
         boolean onePositive=false;
         int allNegativeMax=Integer.MIN_VALUE;
-        for(int i=0;i<arr.length-1;i++){
+        int max=0;
+        int bestMax=0;
+        for(int i=0;i<=arr.length-1;i++){
             if(arr[i]<0){
                 allNegativeMax=Math.max(allNegativeMax,arr[i]);
                 continue;
@@ -16,44 +18,35 @@ public class MaximumSubarraySumWithOneDeletion {
         if(!onePositive){
             return allNegativeMax;
         }
-        int localSum=0;
-        int maxSum=0;
-        int i=0;
-        boolean continuation=false;
-        while(i<arr.length-2){
-            if(arr[i]<0 && localSum<0){
-                localSum=localSum+arr[i];
-                i=i+1;
-            }
-            else if(arr[i]<0 && localSum>0){
-                if(arr[i+1]<0){
-                    i=i+2;
-                    continue;
-                }else{
-                    localSum=localSum+arr[i+1];
-                    continuation=true;
-                    i=i+2;
-                }
-            }else if(arr[i]>=0){
-                localSum=localSum+arr[i];
-                i=i+1;
-            }
-            maxSum=Math.max(maxSum,localSum);
+
+        int[] forwardMax=new int[arr.length];
+
+        for(int i=0;i<arr.length;i++){
+            max=Math.max(max+arr[i],arr[i]);
+            forwardMax[i]=max;
         }
 
-
-
-        if(i==arr.length-1 && !continuation){
-            return Math.max(maxSum,arr[arr.length-1]);
-        }else if(i==arr.length-1 && continuation){
-            maxSum=Math.max(maxSum,maxSum+arr[arr.length-1]);
+        int[] backwardMax=new int[arr.length];
+        max=0;
+        for(int i=arr.length-1;i>=0;i--){
+            max=Math.max(max+arr[i],arr[i]);
+            bestMax=Math.max(bestMax,max);
+            backwardMax[i]=max;
         }
-        return maxSum;
+
+        int o=bestMax;
+
+        for(int i=1;i<arr.length-1;i++){
+            o=Math.max(o,forwardMax[i-1]+backwardMax[i+1]);
+        }
+
+        return o;
     }
 
-
     public static void main(String[] args) {
-        int [] arr= {0,-5,-6,5,0,-5};
+        //int [] arr= {-7,6,1,2,1,4,-1};
+//        int [] arr= {1,-2,0,3};
+        int [] arr= {-50};
         MaximumSubarraySumWithOneDeletion m=new MaximumSubarraySumWithOneDeletion();
         m.maximumSum(arr);
     }
